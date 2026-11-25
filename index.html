@@ -39,7 +39,7 @@ button.go{background:var(--ok);color:#fff;border-color:var(--ok)}
 <button data-key="KeyD" aria-label="Andar à direita">→</button>
 <button data-key="KeyE" aria-label="Girar à direita">↷</button>
 </div><div id="ov" hidden><span id="ovt"></span><button id="again">Jogar de novo</button></div></div>
-<div id="controls">WASD ou setas para andar · Q/E ou arraste para girar · Vista aérea em V</div><div id="shop"></div>
+<div id="controls">WASD ou setas para andar · Q/E ou arraste para girar · V para vista aérea · Ataque automático</div><div id="shop"></div>
 <div id="panel"></div>
 </div>
 <script>
@@ -59,7 +59,7 @@ function pos(d){for(let i=0;i<seg.length;i++){if(d<=seg[i][0]+seg[i][1]||i==seg.
 function dPath(x,y){let m=1e9;for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],dx=b[0]-a[0],dy=b[1]-a[1];let t=((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy);t=Math.max(0,Math.min(1,t));m=Math.min(m,Math.hypot(x-a[0]-dx*t,y-a[1]-dy*t))}return m}
 const SPD=[0,1.2,1.6,2,2.6,3,.8];
 /* ---------- Traços livres e espécies ---------- */
-const BASE={n:'Protodino',e:'🦎',c:200};
+const ALLY={n:'Dino aliado',e:'🦖',c:200};
 const TR={
 feathers:{n:'Penas & Crista',c:110,d:'tiro mais rápido',mod:{cd:.8}},
 claws:{n:'Garras Afiadas',c:110,d:'+1 dano',mod:{dmg:1}},
@@ -86,7 +86,7 @@ anky:{n:'Anquilossauro',e:'🛡️',c:185,col:0x608589,req:['quad','armor','spik
 brachio:{n:'Braquiossauro',e:'🦕',c:185,col:0x80a866,req:['quad','neck','mass'],d:'dano a longa distância',mod:{dmg:2,r:1.65}}};
 function st(t){const s={r:110,cd:45,dmg:1,pr:2,rad:0},ms=[...t.tr].map(i=>TR[i].mod);if(t.sp)ms.push(SP[t.sp].mod);
 for(const m of ms){if(m.r)s.r*=m.r;if(m.cd)s.cd*=m.cd;s.dmg+=m.dmg||0;s.pr+=m.pr||0;s.rad+=m.rad||0;if(m.inf)s.r=9999}return s}
-function model(t){const h=x=>t.tr.has(x),o={col:0x6fb04f,len:1,neck:.5,head:.6,tail:1,s:.95+t.tr.size*.03};
+function model(t){const h=x=>t.tr.has(x),o={col:t===player?0x25a584:0x6fb04f,len:1,neck:.5,head:.6,tail:1,s:.95+t.tr.size*.03};
 if(h('feathers')){o.crest=1;o.cc=0xff7a3d}if(h('claws'))o.claws=1;if(h('plates'))o.pl=1;if(h('spikes'))o.tsp=1;if(h('quad')){o.q=1;o.len=1.3}
 if(h('jaw'))o.head=1.1;if(h('fire'))o.fire=1;if(h('mass')){o.s+=.25;o.stripes=1}if(h('wings')){o.wings=1;o.w=1.1}if(h('agile'))o.leg=1.35;if(h('eyes'))o.eyes=1;if(h('hollow'))o.tail=1.3;
 if(h('neck'))o.long=true;
@@ -181,6 +181,7 @@ function dino(p){
     const z=(i-2)*l*.32,x=side*w*.76;
     oval(x,y+4,z,1.1,1.65,1.5,dark).rotation.z=side*.58;
   }
+  if(p.fire)oval(0,hy-2,hz+9*head,2,1.1,1.6,mat(0xff672b));
   if(k==='trike'||p.horns){
     oval(0,hy+1,hz-4,11,10,2.8,accent).rotation.x=-.25;
     for(const side of [-1,1])horn(side*4.9,hy+5,hz+5,2.1,11,1.09,side*-.18,ivory);
@@ -263,8 +264,8 @@ function update(){
 S.cnt++;if(S.run&&S.q.length&&S.cnt>=Math.max(10,28-S.round)){S.cnt=0;spawn(S.q.shift())}
 for(const b of S.meteors){b.d+=SPD[b.t];const p=pos(Math.min(b.d,L));b.x=p[0];b.y=p[1];
 if(b.d>=L){b.dead=1;S.lives-=b.t==6?40:b.t;if(S.lives<=0){S.lives=0;S.over=1}}}
-for(const t of S.tw){t.cd--;if(t.cd>0)continue;const s=st(t),b=target(t,s);if(!b)continue;t.cd=s.cd;
-const k=t.sp,a=aim(t,b,k=='ptero'?99:7);t.mesh.rotation.y=PI/2-a;
+for(const t of [player,...S.tw]){t.cd--;if(t.cd>0)continue;const s=st(t),b=target(t,s);if(!b)continue;t.cd=s.cd;
+const k=t.sp,a=aim(t,b,k=='ptero'?99:7);if(t!==player)t.mesh.rotation.y=PI/2-a;
 if(k=='ptero'){fxa('l',t.x,t.y,b.x,b.y);hit(b,s.dmg)}
 else if(k=='stego'){for(let i=0;i<10;i++){const q=i*PI/5;addPj({x:t.x,y:t.y,vx:Math.cos(q)*5,vy:Math.sin(q)*5,dmg:s.dmg,pr:s.pr+1,life:Math.min(s.r,300)/5,h:new Set(),k:'d'})}}
 else{const ex=k=='rex'||s.rad>0,v=ex?6:7,q=aim(t,b,v);for(const o of k=='raptor'?[-.18,0,.18]:[0])addPj({x:t.x,y:t.y,vx:Math.cos(q+o)*v,vy:Math.sin(q+o)*v,dmg:s.dmg,pr:s.pr,rad:s.rad,life:s.r*1.3/v,h:new Set(),k:ex?'b':'d'})}}
@@ -277,7 +278,7 @@ S.fx.forEach(f=>f.l--);S.fx.filter(f=>f.l<=0).forEach(rm);S.fx=S.fx.filter(f=>f.
 if(S.run&&!S.q.length&&!S.meteors.length&&!S.over){S.run=false;S.money+=100+S.round*8;if(S.round>=MAXR)S.over=2}}
 /* ---------- Render ---------- */
 let gk=null,gh=null;
-const valid=(x,y)=>x>20&&x<W-20&&y>20&&y<H-20&&dPath(x,y)>34&&!S.tw.some(t=>Math.hypot(t.x-x,t.y-y)<40)&&!trees.some(t=>Math.hypot(t[0]-x,t[1]-y)<28);
+const valid=(x,y)=>x>20&&x<W-20&&y>20&&y<H-20&&dPath(x,y)>34&&!S.tw.some(t=>Math.hypot(t.x-x,t.y-y)<40)&&Math.hypot(player.x-x,player.y-y)>30&&!trees.some(t=>Math.hypot(t[0]-x,t[1]-y)<28);
 function sync(){const T=performance.now()/300;
 if(gk!=S.place){if(gh)disposeObject(gh);gh=S.place?dino(model({tr:new Set()})):null;if(gh)sc.add(gh);gk=S.place}
 if(gh){gh.visible=S.mx>=0&&S.mx<=W&&S.my>=0&&S.my<=H;gh.position.set(S.mx-450,0,S.my-270)}
@@ -303,17 +304,17 @@ else if(S.sel){rg.visible=true;rg.position.set(S.sel.x-450,.8,S.sel.y-270);rg.sc
 else rg.visible=false;
 R.render(sc,cam)}
 /* ---------- Câmera e entrada ---------- */
-const scout=dino({col:0x25a584,cc:0xffb35b,kind:'raptor',len:1,head:.71,tail:1,s:1.15,crest:1,claws:1});
-sc.add(scout);
+
 const viewButton=$('view'), keys=new Set(), focus=new THREE.Vector3(), cameraGoal=new THREE.Vector3();
-const player={x:348,y:318,yaw:2.7,heading:2.7,overview:false};
+const startPosition={x:348,y:318,yaw:2.7,heading:2.7};
+const player={...startPosition,overview:false,tr:new Set(),sp:null,cd:0};
 function changeView(){
   player.overview=!player.overview;
   viewButton.textContent=player.overview?'Voltar à terceira pessoa':'Vista aérea';
   viewButton.setAttribute('aria-pressed',String(player.overview));
   cameraStep(0,true);
   $('move').hidden=player.overview;
-  $('controls').textContent=player.overview?'Clique no terreno para posicionar ou selecionar um dino.':'WASD ou setas para andar · Q/E ou arraste para girar · Vista aérea em V';
+  $('controls').textContent=player.overview?'Clique no terreno para posicionar ou selecionar um dino.':'WASD ou setas para andar · Q/E ou arraste para girar · V para vista aérea · Ataque automático';
 }
 viewButton.onclick=changeView;
 const movementKeys=['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyQ','KeyE'];
@@ -366,15 +367,16 @@ function cameraStep(dt,immediate=false){
       player.heading=Math.atan2(dx,dz);stride=1;
     }
   }
-  const x=player.x-450,z=player.y-270;
-  scout.visible=!player.overview;
-  scout.position.set(x,stride*Math.abs(Math.sin(time*2))*1.7,z);
+  const x=player.x-450,z=player.y-270,scout=player.mesh;
+  const lift=scout.userData.flying?9+Math.sin(time)*4:0;
+  scout.position.set(x,lift+stride*Math.abs(Math.sin(time*2))*1.7,z);
   scout.rotation.y+=Math.atan2(Math.sin(player.heading-scout.rotation.y),Math.cos(player.heading-scout.rotation.y))*(1-Math.exp(-dt*14));
   animateDino(scout,time,stride);
   if(player.overview){cameraGoal.set(0,680,430);focus.set(0,0,14)}
   else{
     const sx=Math.sin(player.yaw),sz=Math.cos(player.yaw);
-    cameraGoal.set(x-sx*115+sz*23,62,z-sz*115-sx*23);focus.set(x+sx*68,15,z+sz*68);
+    const size=scout.scale.x;
+    cameraGoal.set(x+(-sx*115+sz*23)*size,62*size+lift,z+(-sz*115-sx*23)*size);focus.set(x+sx*68,15,z+sz*68);
   }
   cam.position.lerp(cameraGoal,immediate?1:1-Math.exp(-dt*12));
   cam.lookAt(focus);cam.updateMatrixWorld();
@@ -385,29 +387,88 @@ function pt(e){const r=$('c').getBoundingClientRect();ray.setFromCamera({x:(e.cl
 function build(t){if(t.mesh)disposeObject(t.mesh);const keep=t.mesh?t.mesh.rotation.y:0;t.mesh=dino(model(t));t.mesh.position.x=t.x-450;t.mesh.position.z=t.y-270;t.mesh.rotation.y=keep;sc.add(t.mesh)}
 $('c').addEventListener('pointermove',e=>{[S.mx,S.my]=pt(e)});
 $('c').addEventListener('click',e=>{if(S.over||suppressClick)return;const[x,y]=pt(e);S.mx=x;S.my=y;
-if(S.place){const k=BASE;if(valid(x,y)&&S.money>=k.c){S.money-=k.c;const t={x,y,tr:new Set(),sp:null,cd:10,spent:k.c};build(t);S.tw.push(t);S.place=null;ui(1)}return}
+if(S.place){const k=ALLY;if(valid(x,y)&&S.money>=k.c){S.money-=k.c;const t={x,y,tr:new Set(),sp:null,cd:10,spent:k.c};build(t);S.tw.push(t);S.place=null;ui(1)}return}
 const picked=ray.intersectObjects(S.tw.map(t=>t.mesh),true).find(hit=>hit.object.geometry.type!=='TorusGeometry');
 let root=picked?.object;while(root&&root.parent!==sc)root=root.parent;
-S.sel=S.tw.find(t=>t.mesh===root)||S.tw.find(t=>Math.hypot(t.x-x,t.y-y)<26)||null;ui(1)});
-addEventListener('keydown',e=>{if(e.key=='Escape'){S.place=null;S.sel=null;ui(1)}});
+S.sel=S.tw.find(t=>t.mesh===root)||S.tw.find(t=>Math.hypot(t.x-x,t.y-y)<26)||player;ui(1)});
+addEventListener('keydown',e=>{if(e.key=='Escape'){S.place=null;S.sel=player;ui(1)}});
 $('go').onclick=start;$('fast').onclick=()=>{S.sp=S.sp==1?2:1;$('fast').textContent='⏩ x'+S.sp};
-$('again').onclick=()=>{init();$('fast').textContent='⏩ x1';ui(1)};
-const shop=$('shop');{const b=document.createElement('button');b.onclick=()=>{S.sel=null;S.place=S.place?null:'dino';ui(1)};shop.appendChild(b)}
-function ui(f){const sel=S.sel,sig=[S.money,S.lives,S.round,S.run,S.place,sel&&sel.tr.size,sel&&sel.sp,S.tw.length,!!sel,S.over].join();if(!f&&sig==S.sig)return;S.sig=sig;
-$('vi').textContent='❤ '+S.lives;$('di').textContent='💰 '+S.money;$('ro').textContent='Rodada '+S.round+'/'+MAXR;
-$('go').disabled=S.run||!!S.over;$('go').textContent=S.run?'Em andamento…':'▶ Iniciar rodada '+(S.round+1);
-$('ov').hidden=!S.over;$('ovt').textContent=S.over==2?'Vitória! Os dinos dominaram 🎉':'Os meteoros atingiram a base!';
-shop.querySelectorAll('button').forEach(b=>{b.textContent=BASE.e+' '+BASE.n+' · $'+BASE.c;b.disabled=S.money<BASE.c;b.className=S.place?'on':''});
-const p=$('panel');p.innerHTML='';
-if(sel){const a=document.createElement('b');a.textContent=sel.sp?SP[sel.sp].e+' '+SP[sel.sp].n+' (+traços: '+sel.tr.size+')':BASE.e+' Protodino · '+sel.tr.size+'/'+Object.keys(TR).length+' traços';p.appendChild(a);
-const mk=(txt,c,fn,cls,tip)=>{const x=document.createElement('button');x.textContent=txt+' · $'+c;x.title=tip||'';x.disabled=S.money<c;if(cls)x.className=cls;x.onclick=()=>{if(S.money>=c){S.money-=c;sel.spent+=c;fn();build(sel);ui(1)}};p.appendChild(x)};
-for(const k in SP){const e=SP[k],n=e.req.filter(r=>sel.tr.has(r)).length;
-if(sel.sp==k)continue;
-if(n==3)mk('✨ Transformar em '+e.e+' '+e.n,e.c,()=>{sel.sp=k},'go',e.d);
-else{const i=document.createElement('span');i.className='pill';i.textContent=e.e+' '+e.n+' '+n+'/3';i.title=e.d+' — requer: '+e.req.map(r=>TR[r].n).join(', ');p.appendChild(i)}}
-for(const id in TR)if(!sel.tr.has(id))mk('🧩 '+TR[id].n,TR[id].c,()=>sel.tr.add(id),'',TR[id].d);
-const v=document.createElement('button');v.textContent='Vender · $'+Math.round(sel.spent*.7);v.onclick=()=>{S.money+=Math.round(sel.spent*.7);rm(sel);S.tw=S.tw.filter(t=>t!=sel);S.sel=null;ui(1)};p.appendChild(v)}
-else p.textContent=S.place?'Clique no mapa (fora da trilha) para posicionar. Esc cancela.':'Compre um Protodino e clique nele: os traços aparecem livres (sem caminho fixo). Ao reunir os 3 traços de uma espécie, surge a opção de transformação.'}
+$('again').onclick=()=>{init();resetPlayer();$('fast').textContent='⏩ x1';ui(1)};
+const shop=$('shop'), skillButton=document.createElement('button'), allyButton=document.createElement('button');
+skillButton.textContent='Árvore de habilidades';
+skillButton.onclick=()=>{S.place=null;S.sel=player;ui(1)};
+allyButton.textContent=ALLY.e+' '+ALLY.n+' · $'+ALLY.c;
+allyButton.onclick=()=>{S.place=S.place?null:'ally';S.sel=S.place?null:player;ui(1)};
+shop.append(skillButton,allyButton);
+function resetPlayer(){
+  Object.assign(player,startPosition,{tr:new Set(),sp:null,cd:0});
+  build(player);
+  player.mesh.rotation.y=player.heading;
+  S.sel=player;
+  if(player.overview)changeView();
+}
+function ui(force){
+  const sel=S.sel;
+  const signature=[S.money,S.lives,S.round,S.run,S.place,sel===player,player.tr.size,player.sp,S.tw.indexOf(sel),S.over].join();
+  if(!force&&signature===S.sig)return;
+  S.sig=signature;
+  $('vi').textContent='❤ '+S.lives;
+  $('di').textContent='💰 '+S.money;
+  $('ro').textContent='Rodada '+S.round+'/'+MAXR;
+  $('go').disabled=S.run||!!S.over;
+  $('go').textContent=S.run?'Em andamento…':'▶ Iniciar rodada '+(S.round+1);
+  $('ov').hidden=!S.over;
+  $('ovt').textContent=S.over===2?'Vitória! Os dinos dominaram 🎉':'Os meteoros atingiram a base!';
+  skillButton.className=sel===player?'on':'';
+  allyButton.className=S.place?'on':'';
+  allyButton.disabled=S.money<ALLY.c||!!S.over;
+  const panel=$('panel');
+  panel.replaceChildren();
+  if(S.place){
+    panel.textContent='Clique fora da trilha para posicionar o aliado. Esc cancela.';
+    return;
+  }
+  if(sel&&sel!==player){
+    const sell=document.createElement('button'), refund=Math.round(sel.spent*.7);
+    sell.textContent='Vender aliado · $'+refund;
+    sell.onclick=()=>{S.money+=refund;rm(sel);S.tw=S.tw.filter(t=>t!==sel);S.sel=player;ui(1)};
+    panel.append(sell);
+    return;
+  }
+  const label=document.createElement('b'), stats=st(player);
+  label.textContent='Você · '+(player.sp?SP[player.sp].n:'Protodino')+' · '+player.tr.size+'/'+Object.keys(TR).length+' traços · Dano '+stats.dmg;
+  panel.append(label);
+  function upgrade(text,cost,description,buy){
+    const button=document.createElement('button');
+    button.textContent=text+' · $'+cost;
+    button.title=description;
+    button.disabled=S.money<cost||!!S.over;
+    button.onclick=()=>{
+      if(S.money<cost||S.over)return;
+      S.money-=cost;
+      buy();
+      build(player);
+      ui(1);
+    };
+    panel.append(button);
+  }
+  for(const [key,species] of Object.entries(SP)){
+    if(player.sp===key)continue;
+    const missing=species.req.filter(id=>!player.tr.has(id));
+    if(!missing.length){
+      upgrade('Evoluir para '+species.n,species.c,species.d,()=>{player.sp=key});
+    }else{
+      const badge=document.createElement('span');
+      badge.className='pill';
+      badge.textContent=species.n+' '+(species.req.length-missing.length)+'/'+species.req.length;
+      badge.title='Faltam '+missing.map(id=>TR[id].n).join(', ');
+      panel.append(badge);
+    }
+  }
+  for(const [id,trait] of Object.entries(TR)){
+    if(!player.tr.has(id))upgrade(trait.n,trait.c,trait.d,()=>player.tr.add(id));
+  }
+}
 let previous=performance.now(), accumulated=0;
 function loop(now){
   const dt=Math.min((now-previous)/1000,.08);previous=now;
@@ -415,5 +476,5 @@ function loop(now){
   while(accumulated>=1){if(!S.over)update();accumulated--}
   cameraStep(dt);sync();ui();requestAnimationFrame(loop);
 }
-ui(1);cameraStep(0,true);sync();requestAnimationFrame(loop);
+resetPlayer();ui(1);cameraStep(0,true);sync();requestAnimationFrame(loop);
 </script></body></html>
