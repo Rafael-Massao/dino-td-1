@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR" class="game-viewport">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a2018">
+  <meta name="description" content="Defenda as ilhas em um tower defense 3D. Recrute e aprimore dinossauros para sobreviver a vinte ondas.">
+  <title>Guarda das Ilhas</title>
+  <link rel="icon" href="./marca.svg" type="image/svg+xml">
+  <link rel="preload" href="./fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img src="./marca.svg" width="38" height="38" alt="">
+      <span>GUARDA <em>DAS ILHAS</em></span>
+    </div>
+    <div class="hud" aria-label="Estado da partida">
+      <div class="hud-item lives">
+        <span class="hud-icon" data-icon="heart"></span>
+        <div><span class="eyebrow">Vidas</span><strong id="life-value">100</strong></div>
+      </div>
+      <div class="hud-item gold">
+        <span class="hud-icon" data-icon="coin"></span>
+        <div><span class="eyebrow">Ouro</span><strong id="gold-value">650</strong></div>
+      </div>
+      <div class="hud-item wave">
+        <span class="hud-icon" data-icon="flag"></span>
+        <div><span class="eyebrow">Onda</span><strong><span id="wave-value">01</span><span class="wave-total"> / 20</span></strong></div>
+      </div>
+    </div>
+    <nav class="top-actions" aria-label="Opções do jogo">
+      <button class="top-text arsenal-toggle" id="arsenal-button" type="button" aria-controls="arsenal" aria-expanded="false" title="Arsenal · A"><span data-icon="tower"></span><span>Arsenal</span></button>
+      <button class="top-text help-control" id="help-button" data-icon="help" type="button" aria-label="Como jogar" title="Como jogar">Como jogar</button>
+      <button class="icon-button" id="fullscreen-button" data-icon="fullscreen" type="button" aria-label="Tela cheia" title="Tela cheia"></button>
+      <button class="icon-button" id="sound-button" data-icon="volume" aria-label="Silenciar som" title="Silenciar som" type="button"></button>
+      <button class="icon-button" id="settings-button" data-icon="settings" aria-label="Configurações" title="Configurações" type="button"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="mission-head" aria-label="Missão atual">
+    <div>
+      <h1><button class="map-picker" id="map-button" type="button" title="Trocar mapa e dificuldade">
+        <span id="map-name">Enseada Esmeralda</span><span class="map-chevron" data-icon="chevron"></span>
+      </button></h1>
+      <span class="mode-chip"><span data-icon="shield"></span><span id="mode-name">Clássico</span></span>
+    </div>
+
+  </section>
+
+  <div class="battle-layout">
+    <section class="field" aria-label="Campo de batalha">
+      <div class="stage" id="stage">
+        <div class="viewport" id="viewport" aria-label="Tabuleiro 3D. Use as setas e Enter para posicionar uma torre." tabindex="0"></div>
+        <div class="stage-wash"></div>
+        <div class="stage-top">
+          <span class="stage-notice" id="stage-notice" role="status" hidden></span>
+        </div>
+        <div id="map-markers" class="map-markers" aria-hidden="true"></div>
+        <div class="stage-bottom">
+          <button class="map-legend" id="intel-button" type="button" title="Espiar a próxima onda"><span data-icon="radar"></span><span id="intel-label">Próxima onda</span></button>
+          <div class="zoom-controls" aria-label="Controles da câmera">
+            <button data-icon="minus" id="zoom-out" type="button" aria-label="Afastar câmera" title="Afastar câmera"></button>
+            <button data-icon="fit" id="zoom-reset" type="button" aria-label="Centralizar câmera" title="Centralizar câmera"></button>
+            <button data-icon="plus" id="zoom-in" type="button" aria-label="Aproximar câmera" title="Aproximar câmera"></button>
+          </div>
+        </div>
+        <div class="toast" id="toast" role="status" hidden></div>
+        <div class="webgl-message" id="webgl-message" hidden>
+          <strong>O campo de batalha precisa de WebGL 2.</strong>
+          <span>Ative a aceleração gráfica no navegador e recarregue a página.</span>
+        </div>
+      </div>
+      <div class="control-deck">
+        <div class="current-status">
+          <span class="status-icon" id="battle-icon" data-icon="crosshair"></span>
+          <div>
+            <strong id="battle-status">Prepare a defesa</strong>
+            <span id="battle-detail">Escolha um dinossauro no arsenal.</span>
+          </div>
+        </div>
+        <div class="round-controls">
+          <button class="speed-button icon-button" id="speed-button" type="button" aria-label="Velocidade da partida" title="Velocidade · F"><span data-icon="fast"></span><span id="speed-value">1×</span></button>
+          <button class="primary-button wave-button" id="wave-button" type="button"><span id="wave-icon" data-icon="play"></span><span id="wave-label">Iniciar onda</span></button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="arsenal" id="arsenal" aria-label="Arsenal de dinossauros">
+      <div class="panel-head">
+        <div class="panel-title"><span class="panel-icon" data-icon="tower"></span><h2 id="panel-heading">Arsenal</h2></div>
+        <button type="button" class="icon-button master-button" id="mastery-button" data-icon="medal" aria-label="Maestria" title="Maestria dos dinossauros"></button>
+      </div>
+      <div class="category-picker" id="category-picker" aria-label="Categorias de dinossauros" role="group"></div>
+      <div id="shop" class="shop-grid" aria-label="Torres disponíveis"></div>
+      <div id="inspector" class="inspector" hidden></div>
+      <div class="hero-deck">
+        <button id="hero-button" class="hero-control" type="button">
+          <span class="hero-emblem" data-icon="medal"></span>
+          <span class="hero-copy"><strong id="hero-label">Escolher herói</strong><small id="hero-detail">Um por partida</small></span>
+        </button>
+        <button id="hero-ability" class="hero-cast" type="button" hidden disabled title="Habilidade do herói · H">
+          <span data-icon="bolt"></span><span id="hero-timer">H</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+
+</main>
+
+<dialog id="dialog" class="dialog" aria-labelledby="dialog-heading">
+  <div class="dialog-top"><h2 id="dialog-heading"></h2><button id="dialog-close" class="icon-button" data-icon="close" type="button" aria-label="Fechar"></button></div>
+  <div id="dialog-content"></div>
+</dialog>
+</body>
+</html>
