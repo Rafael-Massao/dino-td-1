@@ -1,8 +1,10 @@
 import * as THREE from './vendor/three.module.min.js';
 import {TOWER_BY_ID,routePoint,seeded} from './campaign.js';
-import {ballShape,box,crystal,makeEnemy,makeLights,makeTower,material,rockShape,sharedGeometry,sharedMaterial} from './models.js';
+import {ballShape,box,crystal,makeLights,makeTower,material,rockShape,sharedGeometry,sharedMaterial} from './models.js';
+import {makeMeteor} from './meteor-models.js';
 import {buildTerrain,makeRock} from './terrain.js';
 import {GROWTH,MAP_DINO_SCALE,MAP_SCALE,MOVES,creatureFrame,ease} from './creature-motion.js';
+import {releaseSkinPaint} from './skin-attachments.js';
 
 const groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
 const waterPlane=new THREE.Plane(new THREE.Vector3(0,1,0),.76);
@@ -23,6 +25,7 @@ const dummy=new THREE.Object3D();
 function translucent(hex,opacity,depthTest=true){
   return new THREE.MeshBasicMaterial({color:hex,transparent:true,opacity,depthWrite:false,depthTest,side:THREE.DoubleSide});
 }
+const meteorShade=translucent('#3a322e',.15);
 
 function releaseModels(root){
   const seen=new Set();
@@ -39,13 +42,6 @@ function releaseModels(root){
       mat.dispose();
     }
   });
-}
-
-function freeClonedMaterials(group){
-  group.traverse(node=>{
-    if(node.isMesh&&!sharedMaterial(node.material)) node.material.dispose();
-  });
-  group.removeFromParent();
 }
 
 export class World {
@@ -193,7 +189,9 @@ export class World {
     this.live?.traverse(node=>{
       if(node.isMesh&&node.userData.disposable) node.material.dispose();
     });
-    for(const enemy of this.enemies.values()) freeClonedMaterials(enemy.model);
+    for(const view of this.enemies.values()) this.removeMeteor(view);
+    this.clearPreview();
+    if(this.live) releaseSkinPaint(this.live);
     this.live?.removeFromParent();
     this.live=new THREE.Group();
     this.scene.add(this.live);
@@ -204,7 +202,6 @@ export class World {
     for(const effect of this.effects) effect.mesh.material.dispose();
     this.effects=[];
     this.particles=[];
-    this.preview=[];
     for(const tower of game.towers) this.putTower(tower,false);
     for(const rock of game.obstacles){
       const model=makeRock(rock,game.map.style);
@@ -212,28 +209,28 @@ export class World {
       this.live.add(model);
     }
     const random=seeded(game.map.seed+23);
-    const parade=['red','yellow','red','blue','yellow','red','blue','pink','red'];
-    parade.forEach((type,index)=>{
-      const {model,lift}=makeEnemy(type);
+    const previewTypes=['red','blue','yellow','green','red','blue','pink'];
+    previewTypes.forEach((type,index)=>{
+      const view=this.putMeteor(type);
       const track=index%game.routes.length;
-      const p=routePoint(game.routes[track],(2.2+index*.64)*MAP_SCALE);
-      model.position.set(p.x+(random()-.5)*.46,lift+.29+random()*.48,p.z+(random()-.5)*1.24);
-      const scale=.81+random()*.34;
-      model.scale.setScalar(scale);
-      this.preview.push({model,y:model.position.y,index});
-      this.live.add(model);
+      const p=routePoint(game.routes[track],(2.2+index*.82)*MAP_SCALE);
+      const lane=(random()-.5)*.57;
+      const point={x:p.x+Math.cos(p.angle)*lane,z:p.z-Math.sin(p.angle)*lane,angle:p.angle};
+      this.moveMeteor(view,point.x,point.z,point.angle,0,index);
+      this.preview.push({view,point,index});
     });
     this.sun.shadow.needsUpdate=true;
     this.center();
   }
   clearPreview(){
-    for(const {model} of this.preview) model.removeFromParent();
+    for(const {view} of this.preview) this.removeMeteor(view);
     this.preview=[];
   }
   putTower(tower,animate=true){
     const previous=this.towers.get(tower.id);
     if(previous){
       previous.shadow.material.dispose();
+      releaseSkinPaint(previous.root);
       previous.root.removeFromParent();
     }
     const view=makeTower(tower.type,tower.tier,tower.path,tower.wet,tower.bond);
@@ -288,7 +285,10 @@ export class World {
     if(!this.placing) this.refreshRange();
   }
   setPlacing(type){
-    if(this.ghost) freeClonedMaterials(this.ghost);
+    if(this.ghost){
+      releaseModels(this.ghost);
+      this.ghost.removeFromParent();
+    }
     this.ghost=null;
     this.placing=type;
     this.cursor=null;
@@ -427,14 +427,35 @@ export class World {
     const view=this.towers.get(tower.id);
     if(!view) return;
     view.shadow.material.dispose();
+    releaseSkinPaint(view.root);
     view.root.removeFromParent();
     this.towers.delete(tower.id);
   }
+  putMeteor(type){
+    const view=makeMeteor(type);
+    view.shadow=new THREE.Mesh(circleShape,meteorShade);
+    view.shadow.scale.set(view.radius*1.28,1,view.radius*.84);
+    this.live.add(view.model,view.shadow);
+    return view;
+  }
+  moveMeteor(view,x,z,angle,time,phase){
+    const drift=Math.sin(time*2.84+phase*.74)*.08;
+    view.model.position.set(x,view.lift+drift,z);
+    view.model.rotation.y=angle;
+    view.pose(time,phase);
+    view.shadow.position.set(x,this.game.onWater(x,z)?-.733:.066,z);
+    view.shadow.rotation.y=angle;
+  }
+  removeMeteor(view){
+    view.fade?.dispose();
+    view.model.removeFromParent();
+    view.shadow.removeFromParent();
+  }
   makeEnemyView(enemy){
-    const view=makeEnemy(enemy.type);
-    this.live.add(view.model);
+    const view=this.putMeteor(enemy.type);
     view.detail=enemy;
-    if(enemy.def.hidden) view.fade=view.model.children.find(node=>node.material?.transparent)?.material;
+    this.moveMeteor(view,enemy.x+Math.cos(enemy.angle)*enemy.lane,enemy.z-Math.sin(enemy.angle)*enemy.lane,
+      enemy.angle,this.combatTime||0,enemy.id);
     if(enemy.def.hp>=4){
       const barGroup=new THREE.Group();
       const background=new THREE.Mesh(barShape,material('#283736','light'));
@@ -451,7 +472,7 @@ export class World {
   removeEnemy(enemy){
     const view=this.enemies.get(enemy.id);
     if(!view) return;
-    freeClonedMaterials(view.model);
+    this.removeMeteor(view);
     view.barGroup?.removeFromParent();
     this.enemies.delete(enemy.id);
   }
@@ -473,7 +494,7 @@ export class World {
   enemyPosition(enemy){
     const cached=this.enemies.get(enemy.id);
     const angle=enemy.angle||0, lane=enemy.lane||0;
-    return [enemy.x+Math.cos(angle)*lane,cached?.model.position.y||1.12,enemy.z-Math.sin(angle)*lane];
+    return [enemy.x+Math.cos(angle)*lane,cached?.model.position.y??1.12,enemy.z-Math.sin(angle)*lane];
   }
   handle(event){
     const {type,tower,enemy,rock,trap}=event;
@@ -565,18 +586,26 @@ export class World {
       this.addParticles(p[0],heavy?ground+.25:p[1]-.05,p[2],tint,heavy?19:7,heavy?1.28:.63);
       return;
     }
-    if(type==='pop'){
+    if(type==='shatter'){
       const p=this.enemyPosition(enemy);
-      this.addParticles(...p,enemy.def.color,enemy.def.airship?31:9,enemy.def.airship?1.57:1);
-      if(enemy.def.airship) this.waveEffect(p[0],.13,p[2],'#ffed9e',2.05,.55);
+      const {color,hot,massive}=enemy.def;
+      this.addParticles(...p,color,massive?26:8,massive?1.53:.93);
+      if(hot) this.addParticles(...p,'#ffb85e',massive?11:5,massive?1.80:1.14);
+      if(massive){
+        const surface=this.game.onWater(p[0],p[2])?-.72:.10;
+        this.waveEffect(p[0],surface,p[2],hot?'#ffb676':'#bddeff',2.12,.55);
+      }
       this.removeEnemy(enemy);
     }
     if(type==='deflect'){
       this.addParticles(...this.enemyPosition(enemy),'#f9e8a1',5,.53);
     }
     if(type==='leak'){
+      const p=this.enemyPosition(enemy);
+      const surface=this.game.onWater(p[0],p[2])?-.71:.085;
+      this.addParticles(p[0],surface+.16,p[2],enemy.def.color,enemy.def.massive?27:12,.98);
       this.removeEnemy(enemy);
-      this.waveEffect(enemy.x,.066,enemy.z,'#ff906f',1.12,.52);
+      this.waveEffect(enemy.x,surface,enemy.z,'#ff906f',enemy.def.massive?2.4:1.12,.52);
     }
   }
   updateDinosaur(view,dt,motion){
@@ -669,10 +698,7 @@ export class World {
     const motion=this.reduced?0:t;
     this.terrain.water.material.uniforms.time.value=motion*.8;
     for(const animate of this.terrain.animated) animate(motion);
-    this.preview.forEach(({model,y,index})=>{
-      model.position.y=y+Math.sin(motion*1.9+index*.9)*.14;
-      model.rotation.z=.12*Math.sin(motion*1.45-index);
-    });
+    for(const {view,point,index} of this.preview) this.moveMeteor(view,point.x,point.z,point.angle,motion,index);
     for(const view of this.towers.values()) this.updateDinosaur(view,dt,motion);
     if(this.selected?.stats&&(this.selected.stats.motion||this.selected.stats.style==='aimed')) this.refreshRange();
     for(const {trap,pile} of this.traps.values()){
@@ -680,15 +706,13 @@ export class World {
     }
     const combatTime=this.game.phase==='paused'?this.combatTime:(this.combatTime=motion);
     for(const item of this.enemies.values()){
-      const {detail,model,lift,barGroup,bar,fade}=item;
-      if(fade) fade.opacity=(detail.stripped||this.game.globalVision) ? .95 : .57;
-      const offset=Math.sin((combatTime||0)*3.55+detail.id*.72)*.13;
-      model.position.set(detail.x+Math.cos(detail.angle)*detail.lane,lift+offset,detail.z-Math.sin(detail.angle)*detail.lane);
-      model.rotation.y=detail.angle;
-      model.rotation.z=.11*Math.sin((combatTime||0)*2.85+detail.id);
+      const {detail,model,radius,barGroup,bar,fade}=item;
+      if(fade) fade.opacity=(detail.stripped||this.game.globalVision) ? .96 : .53;
+      const x=detail.x+Math.cos(detail.angle)*detail.lane, z=detail.z-Math.sin(detail.angle)*detail.lane;
+      this.moveMeteor(item,x,z,detail.angle,combatTime||0,detail.id);
       if(bar){
         barGroup.position.copy(model.position);
-        barGroup.position.y+=(detail.def.airship?1.02:.64);
+        barGroup.position.y+=radius*1.26+.14;
         barGroup.quaternion.copy(this.camera.quaternion);
         const remain=Math.max(.018,detail.hp/detail.def.hp);
         bar.scale.x=remain;

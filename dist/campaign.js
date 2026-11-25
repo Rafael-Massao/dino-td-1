@@ -88,20 +88,20 @@ export const MODES = [
 export const XP_LIMITS = [0,0,0,70,140,230];
 export const MAX_WAVE = 20;
 export const ENEMIES = {
-  red:{name:'Rubim',color:'#f36255',hp:1,speed:2.76,value:6,leak:1,desc:'Balão leve e fácil de estourar.'},
-  yellow:{name:'Fagulha',color:'#ffd065',hp:1,speed:3.65,value:3,leak:2,children:['red'],desc:'Mais rápido. Libera um Rubim ao estourar.'},
-  blue:{name:'Azulino',color:'#52cde8',hp:1,speed:3.08,value:4,leak:3,children:['yellow'],desc:'Carrega duas camadas de balões.'},
-  green:{name:'Jade',color:'#aadb4f',hp:2,speed:2.92,value:7,leak:4,children:['blue'],desc:'Casca reforçada e três camadas inferiores.'},
-  pink:{name:'Vespa-rosa',color:'#fb83bd',hp:1,speed:4.64,value:5,leak:3,children:['red','red'],desc:'Muito rápida. Dividirá em dois Rubins.'},
-  lead:{name:'Liga',color:'#9baabd',hp:4,speed:1.92,value:12,leak:5,armor:true,children:['blue'],desc:'A casca metálica resiste a golpes comuns. Anquilossauro e Parasauro conseguem rompê-la.'},
-  veil:{name:'Véu',color:'#b69be8',hp:2,speed:3.45,value:10,leak:5,hidden:true,children:['pink'],desc:'Visível a dinossauros com detecção e a aliados dentro da aura do Coritossauro.'},
-  basalt:{name:'Basalto',color:'#4a445d',hp:3,speed:2.53,value:9,leak:5,immune:['blast'],children:['pink'],desc:'Resiste a abalos. Use mordidas, garradas ou sopros arcanos.'},
-  chalk:{name:'Giz',color:'#ebede0',hp:3,speed:2.69,value:9,leak:5,immune:['frost'],children:['blue'],desc:'Imune a pulsos de gelo.'},
-  stripe:{name:'Listrado',color:'#b0afbf',hp:5,speed:2.41,value:11,leak:5,immune:['frost','blast'],children:['red','blue'],desc:'Suas listras protegem contra gelo e abalos.'},
-  opal:{name:'Opala',color:'#ca77cf',hp:5,speed:3.2,value:11,leak:5,immune:['arcane'],children:['red','yellow'],desc:'Absorve energia arcana. Use ataques físicos.'},
-  clay:{name:'Terracota',color:'#e79057',hp:14,speed:2.47,value:18,leak:8,children:['green','green'],desc:'Casca espessa. Libera dois Jades.'},
-  zeppelin:{name:'Zéfiro',color:'#488bd0',hp:90,speed:1.72,value:65,leak:22,airship:true,children:['clay','clay','blue'],desc:'Dirigível blindado com carga de Terracotas.'},
-  boss:{name:'Nau-Titã',color:'#d45274',hp:370,speed:1.3,value:180,leak:150,airship:true,children:['zeppelin','veil','clay','clay'],desc:'Capitânia da frota. Transporta um Zéfiro e um grupo de balões.'}
+  red:{name:'Meteoro Rubim',color:'#ff8755',hot:true,hp:1,speed:2.76,value:6,leak:1,desc:'Fragmento incandescente e frágil.'},
+  yellow:{name:'Meteoro Fagulha',color:'#ffc568',hot:true,hp:1,speed:3.65,value:3,leak:2,children:['red'],desc:'Rápido. Libera um Rubim ao se partir.'},
+  blue:{name:'Asteroide Azulino',color:'#7bbed1',hp:1,speed:3.08,value:4,leak:3,children:['yellow'],desc:'Rocha azulada com um fragmento de Fagulha no núcleo.'},
+  green:{name:'Asteroide de Jade',color:'#9ed467',hp:2,speed:2.92,value:7,leak:4,children:['blue'],desc:'Sua crosta de jade protege um Azulino.'},
+  pink:{name:'Meteoro Vespa',color:'#ff879d',hot:true,hp:1,speed:4.64,value:5,leak:3,children:['red','red'],desc:'É o mais veloz. Divide-se em dois Rubins.'},
+  lead:{name:'Asteroide de Liga',color:'#b4bacb',hp:4,speed:1.92,value:12,leak:5,armor:true,children:['blue'],desc:'A crosta metálica resiste a golpes comuns. Anquilossauro e Parasauro conseguem rompê-la.'},
+  veil:{name:'Asteroide de Véu',color:'#b69be8',hp:2,speed:3.45,value:10,leak:5,hidden:true,children:['pink'],desc:'Só pode ser atacado por dinossauros com detecção ou aliados na aura do Coritossauro.'},
+  basalt:{name:'Asteroide de Basalto',color:'#757085',hp:3,speed:2.53,value:9,leak:5,immune:['blast'],children:['pink'],desc:'Resiste a abalos. Use mordidas, garradas ou sopros arcanos.'},
+  chalk:{name:'Asteroide de Geada',color:'#d1e9e6',hp:3,speed:2.69,value:9,leak:5,immune:['frost'],children:['blue'],desc:'A crosta congelada resiste a sopros de gelo.'},
+  stripe:{name:'Asteroide Listrado',color:'#bab5c9',hp:5,speed:2.41,value:11,leak:5,immune:['frost','blast'],children:['red','blue'],desc:'Suas camadas minerais protegem contra gelo e abalos.'},
+  opal:{name:'Asteroide de Opala',color:'#d78bdd',hp:5,speed:3.2,value:11,leak:5,immune:['arcane'],children:['red','yellow'],desc:'Absorve energia arcana. Use ataques físicos.'},
+  clay:{name:'Asteroide de Terracota',color:'#e7a075',hp:14,speed:2.47,value:18,leak:8,children:['green','green'],desc:'Crosta espessa. Libera dois fragmentos de Jade.'},
+  zephyr:{name:'Asteroide Zéfiro',color:'#75a8ea',hp:90,speed:1.72,value:65,leak:22,massive:true,children:['clay','clay','blue'],desc:'Asteroide maciço. Libera Terracotas e um Azulino ao se partir.'},
+  boss:{name:'Asteroide Titã',color:'#f38080',hot:true,hp:370,speed:1.3,value:180,leak:150,massive:true,children:['zephyr','veil','clay','clay'],desc:'A maior ameaça das ilhas. Ao se partir, libera um Zéfiro e três outros asteroides.'}
 };
 
 export const WAVES = [
@@ -116,15 +116,15 @@ export const WAVES = [
   [['green',13,.28],['lead',9,.41],['chalk',3,.48],['veil',12,.33]],
   [['clay',7,.66],['blue',16,.22],['pink',18,.24]],
   [['lead',11,.48],['basalt',3,.42],['clay',9,.51],['veil',12,.31]],
-  [['zeppelin',1,.65],['clay',9,.44],['green',19,.24]],
+  [['zephyr',1,.65],['clay',9,.44],['green',19,.24]],
   [['pink',23,.19],['opal',3,.48],['veil',18,.3],['lead',14,.42]],
-  [['clay',14,.39],['lead',15,.27],['zeppelin',2,3.4]],
-  [['green',25,.18],['zeppelin',3,2.4],['veil',18,.24]],
-  [['clay',18,.31],['stripe',3,.62],['veil',22,.16],['zeppelin',2,1.2]],
-  [['lead',24,.22],['clay',19,.29],['zeppelin',3,1.9],['pink',24,.13]],
-  [['zeppelin',4,1.7],['clay',22,.21],['veil',24,.18]],
-  [['veil',27,.15],['lead',24,.22],['zeppelin',5,1.25],['clay',16,.2]],
-  [['clay',14,.28],['veil',18,.16],['boss',1,.7],['zeppelin',4,1.8],['pink',24,.16]]
+  [['clay',14,.39],['lead',15,.27],['zephyr',2,3.4]],
+  [['green',25,.18],['zephyr',3,2.4],['veil',18,.24]],
+  [['clay',18,.31],['stripe',3,.62],['veil',22,.16],['zephyr',2,1.2]],
+  [['lead',24,.22],['clay',19,.29],['zephyr',3,1.9],['pink',24,.13]],
+  [['zephyr',4,1.7],['clay',22,.21],['veil',24,.18]],
+  [['veil',27,.15],['lead',24,.22],['zephyr',5,1.25],['clay',16,.2]],
+  [['clay',14,.28],['veil',18,.16],['boss',1,.7],['zephyr',4,1.8],['pink',24,.16]]
 ];
 
 export function seeded(seed) {
@@ -196,7 +196,7 @@ export const TARGETS = ['Primeiro','Último','Mais forte'];
 export const FLIGHT_PATTERNS = ['Órbita','Oito','Trevo'];
 export const FIELD_ITEMS = [
   {id:'nectar',name:'Néctar de vigília',price:100,desc:'Revela Véus por 10 segundos.'},
-  {id:'sap',name:'Pote de seiva',price:125,desc:'Atrasa a frota por 5 segundos.'},
+  {id:'sap',name:'Pote de seiva',price:125,desc:'Desacelera os meteoros e asteroides por 5 segundos.'},
   {id:'fruit',name:'Fruto medicinal',price:155,desc:'Recupera até 3 vidas perdidas.'}
 ];
 const MOTION_STYLES=new Set(['wing','pilot']);
@@ -260,7 +260,6 @@ export class Defense {
     this.heroChoice=null;
     this.hero=null;
     this.revealUntil=0;
-    this.placed('scout',...map.starter,0);
   }
   get totalXP(){return Object.values(this.progress).reduce((sum,value)=>sum+value,0);}
   get remaining(){return this.queue.length+this.enemies.length;}
@@ -477,7 +476,7 @@ export class Defense {
     enemy.dead=true;
     this.gold+=enemy.def.value;
     this.killCount++;
-    this.emit('pop',{enemy});
+    this.emit('shatter',{enemy});
     enemy.def.children?.forEach((type,index)=>{
       this.spawn(type,enemy.route,Math.max(0,enemy.progress-index*.45*MAP_SCALE),Math.max(-.31,Math.min(.31,enemy.lane+(index%2 ? .17 : -.1))));
     });
@@ -497,7 +496,7 @@ export class Defense {
       enemy.acidTime=Math.max(enemy.acidTime,stats.duration||2.5);
     }
     if(stats.strip) enemy.stripped=true;
-    if(stats.knock&&!enemy.def.airship) enemy.progress=Math.max(0,enemy.progress-stats.knock);
+    if(stats.knock&&!enemy.def.massive) enemy.progress=Math.max(0,enemy.progress-stats.knock);
     this.hit(enemy,stats.damage+buffs.damage);
   }
   visibleSplash(enemy,stats,buffs){

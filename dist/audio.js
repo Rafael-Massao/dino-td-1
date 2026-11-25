@@ -79,14 +79,14 @@ export class Sound {
     }
     if(type==='impact') type=event.attack.kind;
     const when=this.ctx.currentTime;
-    const interval={pop:.036,stomp:.11,tail:.10,deflect:.15,roar:.16,breath:.13,windup:.12}[type]||.06;
+    const interval={shatter:.047,stomp:.11,tail:.10,deflect:.15,roar:.16,breath:.13,windup:.12}[type]||.06;
     if(when-(this.cooldowns.get(type)??-1)<interval) return;
     this.cooldowns.set(type,when);
     const pitch=.79+Math.random()*.49;
-    if(type==='pop'){
-      const big=event.enemy.def.airship;
-      this.tone((big?232:630)*pitch,(big?58:195)*pitch,big ? .19 : .072,big ? .35 : .16,'sine');
-      this.burst(big?510:1900,big ? .21 : .038,big ? .35 : .10);
+    if(type==='shatter'){
+      const {massive,hot}=event.enemy.def;
+      this.burst((massive?570:hot?1480:1090)*pitch,massive?.23:.072,massive?.36:.17,'bandpass');
+      this.tone((massive?172:310)*pitch,(massive?47:126)*pitch,massive?.21:.062,massive?.29:.08,'triangle');
     }
     if(type==='deflect'){
       this.tone(1750*pitch,1480*pitch,.145,.11,'triangle');

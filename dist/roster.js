@@ -26,14 +26,14 @@ function dino(id,category,name,species,role,icon,price,plan,palette,desc,stats,p
 
 export const TOWERS = [
   dino('scout','primary','Psitaco','Psittacosaurus','Mordida','target',190,'beak',colors('#71a452','#f3cd80','#365f4d','#bad885'),
-    'Avança e fecha o bico nos balões. Uma defesa versátil para as primeiras ondas.',
+    'Avança e fecha o bico nas rochas. Uma defesa versátil para as primeiras ondas.',
     {range:4.35,rate:.66,damage:1},[
       path('Bico robusto','target','Mordidas mais fortes. No nível 2, rompe Liga.',[{damage:1},{damage:1,armor:true},{damage:2},{damage:2,pierce:1},{damage:4}],1.08),
       path('Olhar atento','range','Alcance maior. Revela Véus no nível 2.',[{range:.8},{range:.6,detect:true},{range:.6,pierce:1},{range:.55,damage:1},{range:.8,pierce:2}]),
       path('Bicadas velozes','bolt','Mordidas mais rápidas que alcançam mais alvos.',[{rate:-.12,pierce:1},{rate:-.08},{rate:-.06,pierce:1},{rate:-.06,damage:1},{rate:-.07,pierce:2}],1.02)
     ]),
   dino('loop','primary','Estegossauro','Stegosaurus','Varredura de cauda','loop',235,'plates',colors('#55a297','#b2dfa0','#f3aa62','#dd716d'),
-    'Gira de lado e varre vários balões com os espinhos da cauda.',
+    'Gira de lado e varre várias rochas com os espinhos da cauda.',
     {range:4.55,rate:1.12,damage:1,pierce:5,style:'boomerang'},[
       force('Cauda vulcânica','Mais dano. A partir do nível 2, rompe Liga.',1,{armor:true}),
       path('Arco amplo','range','Mais alcance e capacidade de acerto.',[{range:.6,pierce:1},{range:.65,pierce:2},{pierce:2},{range:.5,pierce:3},{pierce:4,damage:2}]),
@@ -42,26 +42,26 @@ export const TOWERS = [
   dino('cannon','primary','Anquilossauro','Ankylosaurus','Caudada de impacto','bolt',315,'armor',colors('#668596','#c4cda0','#dc885a','#eaab68'),
     'A clava na ponta da cauda rompe Liga e abala grupos. Basalto e Listrado resistem ao impacto.',
     {range:4.6,rate:1.33,damage:2,splash:1.52,armor:true,style:'bomb',channel:'blast',lob:true},[
-      path('Clava pesada','target','Causa mais dano a balões de casca grossa.',[{damage:2},{damage:2},{damage:4,splash:.2},{damage:6},{damage:10,splash:.2}],1.28),
+      path('Clava pesada','target','Causa mais dano a asteroides com crosta grossa.',[{damage:2},{damage:2},{damage:4,splash:.2},{damage:6},{damage:10,splash:.2}],1.28),
       path('Cratera','range','Expande a área de impacto da cauda.',[{splash:.45,range:.15},{splash:.4},{splash:.45,damage:1},{splash:.5,damage:1},{splash:.6,damage:4}],1.12),
       path('Cauda ágil','bolt','Encurta o intervalo entre caudadas.',[{rate:-.24},{rate:-.17},{rate:-.15,damage:1},{rate:-.17,range:.4},{rate:-.16,damage:3}],1.1)
     ]),
   dino('quills','primary','Kentrossauro','Kentrosaurus','Giro espinhoso','spark',245,'spines',colors('#b67b6f','#f0c995','#efda8a','#cf7554'),
-    'Gira com os espinhos eriçados para atingir os balões ao redor. Funciona bem junto a curvas.',
+    'Gira com os espinhos eriçados para atingir as rochas ao redor. Funciona bem junto a curvas.',
     {range:2.52,rate:.77,damage:1,style:'burst'},[
       force('Espinhos rígidos','Aumenta o dano. Penetra Liga no nível 2.',1,{armor:true}),
       reach('Onda de espinhos','Atinge um raio maior em todas as direções.'),
       rhythm('Pele eriçada','Encurta o intervalo entre giros.',.09)
     ]),
   dino('frost','primary','Paquicefalo','Pachycephalosaurus','Gelo','snow',275,'dome',colors('#71a5c4','#d4e8d1','#a6e3e6','#777ad9'),
-    'Sopra uma nuvem gelada que atrasa grupos. Giz e Listrado resistem ao frio.',
+    'Sopra uma nuvem gelada que atrasa grupos. Geada e Listrado resistem ao frio.',
     {range:3.75,rate:1.08,damage:1,splash:1.16,slow:.47,duration:1.6,style:'frost',channel:'frost',lob:true},[
       path('Gelo cortante','target','Mais dano e, no nível 2, quebra Liga.',[{damage:1},{armor:true,damage:1},{damage:2},{damage:2,splash:.3},{damage:4}],1.12),
       path('Nevasca','range','Pulsos mais amplos, com frio duradouro.',[{splash:.42,duration:.35},{range:.5,splash:.3},{duration:.6,splash:.35},{range:.65,splash:.4},{splash:.6,damage:2}],1.04),
       path('Frio profundo','bolt','Pulsos rápidos e lentidão mais intensa.',[{slow:.13,duration:.3},{rate:-.17},{slow:.12,duration:.4},{rate:-.19,damage:1},{slow:.08,rate:-.12}],1.08)
     ]),
   dino('glue','primary','Dilofossauro','Dilophosaurus','Resina','drop',210,'twin',colors('#b89b52','#f3d981','#dc783f','#e3555e'),
-    'Cospe resina que retarda os balões. A especialização Corrosão adiciona dano ao longo do tempo.',
+    'Cospe resina que retarda os meteoros e asteroides. A especialização Corrosão adiciona dano ao longo do tempo.',
     {range:4.1,rate:1.03,damage:0,splash:.7,slow:.70,duration:3.2,style:'resin',armor:true},[
       path('Corrosão','target','A resina começa a causar dano ao longo do tempo.',[{corrosion:1},{corrosion:1},{corrosion:2},{corrosion:2},{corrosion:3}]),
       path('Resina em leque','range','A cola se espalha para grupos.',[{splash:.6},{splash:.38,range:.35},{splash:.48},{splash:.5,duration:.5},{splash:.65,range:.4}]),
@@ -89,14 +89,14 @@ export const TOWERS = [
       rhythm('Maré veloz','Dá caudadas mais rápidas pelos dois flancos.',.105,{pierce:1})
     ]),
   dino('wing','military','Microraptor','Microraptor','Voo de patrulha','feather',420,'wing',colors('#5680a4','#b4d6e0','#ec9766','#8acbc4'),
-    'Voa em torno do poleiro e mergulha sobre os balões. Altere o padrão de voo no painel.',
+    'Voa em torno do poleiro e mergulha sobre os meteoros. Altere o padrão de voo no painel.',
     {range:3.2,rate:.61,damage:2,motion:'wing',style:'bolt',lob:true},[
-      path('Mergulho de choque','target','A partir do nível 2, o impacto atinge vários balões.',[{damage:1},{style:'bomb',channel:'blast',splash:.9,armor:true},{damage:2},{splash:.5,damage:2},{damage:4}],1.24),
+      path('Mergulho de choque','target','A partir do nível 2, o impacto atinge vários alvos.',[{damage:1},{style:'bomb',channel:'blast',splash:.9,armor:true},{damage:2},{splash:.5,damage:2},{damage:4}],1.24),
       reach('Asas de vigia','Maior cobertura. Detecta Véus no nível 2.',{detect:true}),
       rhythm('Voo rasante','Mergulha mais depressa.',.065,{pierce:1})
     ]),
   dino('pilot','military','Yi','Yi qi','Voo dirigido','feather',515,'glider',colors('#9a7069','#f5cc98','#726694','#efab7f'),
-    'Plana até o cursor ou um ponto marcado e mergulha sobre os balões com as garras.',
+    'Plana até o cursor ou um ponto marcado e mergulha sobre os meteoros com as garras.',
     {range:3.45,rate:.54,damage:2,motion:'pilot',style:'bolt',lob:true},[
       force('Garras reforçadas','Mais dano. Perfura Liga no nível 2.',1,{armor:true},1.28),
       reach('Vigia do desfiladeiro','Alcance maior e detecção no nível 2.',{detect:true}),
@@ -119,43 +119,43 @@ export const TOWERS = [
   dino('prism','magic','Parasauro','Parasaurolophus','Sopro arcano','spark',440,'crest',colors('#9c80c1','#efc9ac','#c278aa','#ead5a3'),
     'Sopra energia capaz de romper Liga. Opala absorve magia.',
     {range:5.8,rate:.95,damage:3,style:'prism',channel:'arcane',armor:true},[
-      path('Sopro solar','target','Concentra energia contra cascas resistentes.',[{damage:2},{damage:3},{damage:5},{damage:7},{damage:11}],1.4),
+      path('Sopro solar','target','Concentra energia contra rochas resistentes.',[{damage:2},{damage:3},{damage:5},{damage:7},{damage:11}],1.4),
       path('Espectro','range','Revela Véus e amplia o alcance do sopro.',[{detect:true,range:.5},{range:.65},{range:.7,pierce:1},{range:.8,damage:3},{range:1,pierce:2}],1.18),
       path('Difração','bolt','O sopro alcança mais alvos.',[{pierce:1,rate:-.1},{pierce:1},{rate:-.12,damage:1},{pierce:2,rate:-.1},{pierce:2,damage:3}],1.2)
     ]),
   dino('super','magic','Tiranossauro','Tyrannosaurus','Salto arcano','bolt',995,'rex',colors('#b9716e','#f2cb97','#7e5869','#f7a78c'),
-    'Salta sobre os balões em rápida sucessão. Cada linhagem cria espinhos, placas e escamas próprias.',
+    'Salta sobre as rochas e as tritura em rápida sucessão. Cada linhagem cria espinhos, placas e escamas próprias.',
     {range:5.05,rate:.22,damage:2,style:'prism',channel:'arcane',armor:true},[
       force('Crista solar','Mais dano e alvos por salto.',2,{pierce:1},1.8),
       path('Carapaça sideral','range','Cristais ampliam alcance e detecção.',[{range:.7},{detect:true,range:.8},{range:.8,pierce:1},{damage:2,range:.65},{range:1,damage:4}],1.52),
       rhythm('Tempestade ígnea','Saltos mais rápidos e fortes.',.018,{pierce:1},1.62)
     ]),
   dino('hive','magic','Deinonico','Deinonychus','Caça furtiva','feather',365,'plume',colors('#667f9c','#c4d9c3','#b292ce','#edb77d'),
-    'Detecta Véus por conta própria e corta os balões com garradas rápidas.',
+    'Detecta Véus por conta própria e trinca as rochas com garradas rápidas.',
     {range:4.22,rate:.34,damage:1,detect:true,style:'bolt'},[
       path('Garras curvas','target','Mais dano. Rompe Liga no nível 2.',[{damage:1},{armor:true,damage:1},{damage:1},{damage:2},{damage:4}],1.22),
       path('Garrada de choque','range','No nível 2, o golpe passa a atingir uma área.',[{range:.5},{splash:.68,style:'bomb',channel:'blast',armor:true,lob:true},{splash:.25},{range:.6,damage:1},{splash:.35,damage:3}],1.16),
       path('Bando veloz','bolt','Mais cadência e alvos por garrada.',[{rate:-.06,pierce:1},{rate:-.045},{pierce:1,rate:-.035},{damage:1,rate:-.035},{pierce:2,damage:2}],1.12)
     ]),
   dino('brew','magic','Protocerato','Protoceratops','Secreções naturais','drop',415,'frill',colors('#b28cb3','#f2cda6','#755988','#a9dfa6'),
-    'Cospe ácido nos balões e libera um aroma que acelera os aliados próximos.',
+    'Cospe ácido nas rochas e libera um aroma que acelera os aliados próximos.',
     {range:3.85,rate:.96,damage:1,splash:.78,corrosion:1,style:'resin',armor:true,aura:.12,auraRadius:3.25},[
       path('Fermento ácido','target','Ácido mais potente e área maior.',[{corrosion:1},{damage:1,splash:.3},{corrosion:2},{damage:2},{corrosion:3,splash:.4}],1.16),
       path('Fortificante','range','O aroma fortalece os golpes e o alcance dos aliados.',[{auraRange:.4},{auraDamage:1},{auraRadius:.6},{auraRange:.5},{auraDamage:2,auraRadius:.6}],1.2),
       rhythm('Glândulas ativas','Cospe ácido mais depressa e melhora a aura.',.11,{aura:.11})
     ]),
   dino('grove','magic','Iguanodonte','Iguanodon','Giro da floresta','leaf',395,'thumbs',colors('#699f62','#d8e2ac','#c4a961','#81c88d'),
-    'Varre os balões com a cauda e fica mais rápido quando a trilha está cheia.',
+    'Varre as rochas com a cauda e fica mais rápido quando a trilha está cheia.',
     {range:4.4,rate:.69,damage:2,pierce:2,crowd:true,style:'bolt'},[
       force('Cauda espinhosa','Mais dano. Rompe Liga no nível 2.',1,{armor:true}),
       path('Vendaval do bosque','range','A partir do nível 2, rajadas empurram grupos.',[{range:.6},{splash:1.1,knock:.65,style:'prism',channel:'arcane'},{range:.7},{splash:.5,knock:.4},{damage:4,knock:.6}],1.2),
       rhythm('Surto de folhas','Ataca ainda mais depressa em multidões.',.085,{pierce:1})
     ]),
   dino('tide','magic','Halszkaraptor','Halszkaraptor','Anfíbio','waves',390,'duck',colors('#4b9eab','#f5d598','#6d81b9','#89e6d7'),
-    'Vive na terra ou na água. Seu canto de maré desacelera grupos de balões.',
+    'Vive na terra ou na água. Seu canto de maré desacelera grupos de meteoros e asteroides.',
     {range:4,rate:.92,damage:1,splash:1.18,slow:.39,duration:1.85,terrain:'both',style:'tide',channel:'arcane',armor:true,lob:true},[
       force('Canto abissal','Aumenta o dano das ondas aquáticas.',1,{splash:.3}),
-      path('Corrente hipnótica','range','O canto retarda por mais tempo e empurra balões.',[{slow:.13},{knock:.5,duration:.5},{splash:.4},{slow:.13,splash:.35},{knock:.65,duration:1.3}],1.14),
+      path('Corrente hipnótica','range','O canto retarda por mais tempo e empurra rochas.',[{slow:.13},{knock:.5,duration:.5},{splash:.4},{slow:.13,splash:.35},{knock:.65,duration:1.3}],1.14),
       rhythm('Refrão das marés','Frequência maior e detecção no nível 2.',.11,{detect:true})
     ]),
   dino('farm','support','Braquiossauro','Brachiosaurus','Renda por onda','leaf',345,'long',colors('#8aa56d','#ead39b','#bd9564','#ecc079'),
@@ -166,7 +166,7 @@ export const TOWERS = [
       path('Época fértil','bolt','Colheitas maiores e valorização da revenda.',[{income:27,resale:.05},{income:35,resale:.05},{income:53},{income:70,resale:.05},{income:135}],1.08)
     ]),
   dino('spikes','support','Espinóforo','Spinophorosaurus','Armadilhas','spark',370,'sauropod',colors('#ab8d65','#ebcc94','#6e9982','#e9a663'),
-    'Espalha pilhas de espinhos na trilha para estourar os balões que passarem.',
+    'Espalha pilhas de espinhos na trilha para partir os meteoros que passarem.',
     {range:4.15,rate:2.1,damage:1,charges:6,style:'trap'},[
       path('Armadilha reforçada','target','Espinhos mais fortes. Perfuram Liga no nível 2.',[{damage:1},{armor:true,damage:1},{damage:2},{damage:3},{damage:5}],1.12),
       path('Tapete de espinhos','range','Pilhas maiores e capazes de durar mais.',[{charges:3},{charges:3,trapLimit:2},{charges:5},{charges:7,range:.8},{charges:10,damage:2}]),
@@ -180,7 +180,7 @@ export const TOWERS = [
       path('Ritmo de batalha','bolt','Acelera ainda mais as torres próximas.',[{aura:.11},{aura:.10},{aura:.11},{aura:.11},{aura:.17,range:.5}],1.13)
     ]),
   dino('engineer','support','Paquirrino','Pachyrhinosaurus','Sentinelas','tower',445,'bosses',colors('#7195a0','#ccdbb0','#e8a86b','#70d2bd'),
-    'Morde os balões e chama sentinelas jovens que também atacam por conta própria.',
+    'Morde as rochas e chama sentinelas jovens que também atacam por conta própria.',
     {range:4.32,rate:.87,damage:1,sentries:2,style:'bolt'},[
       path('Ninho de sentinelas','target','Mais sentinelas, com maior dano e duração.',[{sentryDamage:1},{sentries:1},{sentryDamage:2},{sentries:1},{sentryDamage:4,sentries:1}],1.18),
       path('Sobrecarga','bolt','Reforça a cadência dos aliados próximos.',[{aura:.2,auraRadius:3.4},{aura:.11},{auraRadius:.6},{aura:.14},{auraDamage:2,aura:.2}],1.2),
@@ -201,31 +201,31 @@ function hero(id,name,species,role,icon,price,plan,palette,desc,stats,ability){
 }
 export const HEROES = [
   hero('lira','Lira','Guanlong','Caçadora','target',490,'royal',colors('#6aa6a2','#f4d796','#fcb05a','#77dbd3'),
-    'Caçadora de crista dourada que salta sobre os balões e rompe armaduras com seu rugido.',
+    'Caçadora de crista dourada que salta sobre os meteoros e rompe armaduras com seu rugido.',
     {range:5.3,rate:.59,damage:2,pierce:2},
-    skill('Rugido de âmbar','Solta um rugido que rompe a armadura de vários balões.',24,'amber-roar')),
+    skill('Rugido de âmbar','Solta um rugido que rompe a crosta de vários asteroides.',24,'amber-roar')),
   hero('brasa','Brasa','Cryolophosaurus','Fogo','spark',580,'flame',colors('#d27454','#f5cc8b','#f2a651','#df555a'),
     'Usa chamas em pulsos de curto alcance. Opala resiste à magia do fogo.',
     {range:4.2,rate:.78,damage:3,splash:1.05,style:'forge',channel:'arcane',armor:true,lob:true},
-    skill('Círculo de brasas','Queima os balões próximos por vários segundos.',29,'flame')),
+    skill('Círculo de brasas','Derrete as rochas próximas por vários segundos.',29,'flame')),
   hero('tambor','Tambor','Carnotaurus','Cerco','bolt',590,'bull',colors('#a96452','#edb58e','#f29b66','#b65a68'),
     'Quebra armaduras com pisadas fortes que fazem a trilha tremer.',
     {range:4.9,rate:1.13,damage:4,splash:1.35,style:'bomb',channel:'blast',armor:true,lob:true},
-    skill('Tremor profundo','Provoca abalos ao redor de até seis balões na ilha.',34,'quake')),
+    skill('Tremor profundo','Provoca abalos ao redor de até seis alvos na ilha.',34,'quake')),
   hero('seiva','Seiva','Nothronychus','Magia do bosque','leaf',525,'claws',colors('#74a071','#e2d8a1','#9bd389','#8fbd6e'),
-    'Chama as raízes da floresta para atrasar grupos de balões.',
+    'Chama as raízes da floresta para atrasar grupos de meteoros e asteroides.',
     {range:4.9,rate:.8,damage:1,splash:1.04,slow:.43,duration:1.8,style:'tide',channel:'arcane',armor:true,lob:true},
-    skill('Raízes errantes','As raízes desaceleram e empurram os balões na ilha.',27,'roots')),
+    skill('Raízes errantes','As raízes desaceleram e empurram as rochas na ilha.',27,'roots')),
   hero('mina','Mina','Maiasaura','Intendência','coin',475,'mother',colors('#a181ae','#ecd196','#d39f78','#f0bd89'),
     'Organiza as reservas do arquipélago e entrega ouro a cada onda.',
     {range:3.1,income:65,style:'support'},
     skill('Reserva de âmbar','Gera ouro e recupera até duas vidas perdidas.',38,'stash')),
   hero('talho','Talho','Utahraptor','Duelista','feather',545,'duelist',colors('#857bab','#f1d7a9','#ffad8e','#d283ab'),
-    'Usa as garras para golpear rapidamente todos os balões próximos.',
+    'Usa as garras para golpear rapidamente todas as rochas próximas.',
     {range:2.9,rate:.43,damage:2,style:'burst',armor:true},
     skill('Dança das garras','Executa um golpe pesado em área e ganha cadência temporária.',25,'slash')),
   hero('iris','Íris','Saurornitholestes','Vigia aérea','radar',555,'lookout',colors('#4d8baf','#c1e1d4','#eec076','#8ce1cd'),
-    'Salta sobre os balões com asas abertas. A partir do nível 8, revela Véus para toda a defesa.',
+    'Salta sobre os meteoros com asas abertas. A partir do nível 8, revela Véus para toda a defesa.',
     {range:5.45,rate:.55,damage:2,style:'bolt',detect:true}, 
     skill('Olhos no céu','Revela Véus à defesa por 12 segundos, antes mesmo do nível 8.',31,'vision')),
   hero('ambar','Âmbar','Oviraptor','Mercadora','coin',505,'egg',colors('#bd9255','#f4da9a','#d37172','#a5d4a2'),

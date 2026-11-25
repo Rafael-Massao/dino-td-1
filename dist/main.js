@@ -64,7 +64,7 @@ function closeDialog(){
 function handleEvent(event){
   world?.handle(event);
   audio.play(event);
-  if(!['fire','projectile','projectile-end','spawn','hit','impact','deflect'].includes(event.type)) uiDirty=true;
+  if(!['attack-start','spawn','hit','impact','deflect'].includes(event.type)) uiDirty=true;
   if(['build','upgrade','sell','clear','hero-level','item','ability','wave','phase'].includes(event.type)){
     inspectorDirty=true;
     world?.refreshRange();
@@ -303,10 +303,10 @@ function describeStatus(){
   }
   if(game.phase==='battle') return ['Onda '+game.wave+' em andamento',game.remaining+(game.remaining===1?' invasor restante.':' invasores restantes.'),'flag'];
   if(game.phase==='paused') return ['Partida pausada','Retome a onda quando estiver pronto.','pause'];
-  if(game.phase==='defeat') return ['Defesa derrubada','A frota atravessou as defesas.','flag'];
+  if(game.phase==='defeat') return ['Defesa derrubada','As rochas atravessaram as defesas.','flag'];
   if(game.phase==='victory') return ['Ilhas protegidas','Você concluiu as vinte ondas.','medal'];
   if(game.wave>1) return ['Onda '+game.wave+' à espera','Aprimore suas torres ou inicie a próxima onda.','crosshair'];
-  return ['Prepare a defesa','Escolha um dinossauro no arsenal.','crosshair'];
+  return ['Prepare a defesa','Recrute um dinossauro no arsenal e posicione-o no mapa.','crosshair'];
 }
 function syncUI(){
   uiDirty=false;
@@ -491,7 +491,7 @@ function syncHero(){
 }
 function activateHero(){
   if(!game.activateHero()){
-    if(game.heroStatus().ready) toast('Aguarde os balões entrarem no alcance da habilidade.');
+    if(game.heroStatus().ready) toast('Aguarde os alvos entrarem no alcance da habilidade.');
     return;
   }
   toast(TOWER_BY_ID[game.hero.type].ability.name+' ativada.');
@@ -516,7 +516,7 @@ function showGuide(){
   const guide=(image,title,paragraph)=>'<div class="guide-row"><span class="status-icon">'+icon(image)+'</span><div><h3>'+title+'</h3><p>'+paragraph+'</p></div></div>';
   showDialog('guide','Como jogar','<div class="help-grid">'+
     guide('tower','Crie seus dinossauros','Cada dinossauro chega bebê e cresce com os aprimoramentos. Escolha uma linhagem ou compare as fases em Ver evoluções. As teclas 1 a 7 selecionam criaturas na categoria atual.')+
-    guide('play','Defenda a saída','Inicie ou pause a onda com Espaço. F alterna a velocidade. Balões que chegam à saída custam vidas. Complete vinte ondas para vencer.')+
+    guide('play','Defenda a saída','Posicione seus dinossauros e inicie a onda com Espaço. F alterna a velocidade. Meteoros e asteroides que chegam à saída custam vidas. Complete vinte ondas para vencer.')+
     guide('shield','Combine as espécies','Anquilossauro e Parasauro rompem Liga. Coritossauro revela Véus para aliados próximos. Posicione Espinossauro e Barionix na água.')+
     guide('medal','Escolha um herói','Recrute um herói por partida. Ao chegar ao nível 3, ative a habilidade com H ou com o botão ao lado do herói.')+
     guide('map','Explore o mapa','Arraste com o botão direito ou com um dedo para mover a câmera. Use o zoom para se aproximar e A para alternar o arsenal. Ao construir, use as setas e confirme com Enter.')+
@@ -566,7 +566,7 @@ function showMaps(){
 }
 function showSettings(){
   const option=(key,name,text)=>'<label class="setting-row"><span><strong>'+name+'</strong><small>'+text+'</small></span><input type="checkbox" data-setting="'+key+'" '+(settings[key]?'checked':'')+'></label>';
-  showDialog('settings','Configurações',option('sound','Som','Estouro, impacto metálico e ataques.')+
+  showDialog('settings','Configurações',option('sound','Som','Rochas se partindo, impacto metálico e ataques.')+
     option('music','Trilha dinâmica','A trilha acelera durante a batalha.')+
     option('reduced','Animações reduzidas','Diminui partículas e movimentos do cenário.')+
     option('auto','Ondas automáticas','A próxima onda começa após uma breve pausa.')+
@@ -575,8 +575,8 @@ function showSettings(){
 function showEnd(won){
   if(dialogScreen==='maps') return;
   showDialog('end',won?'Ilhas protegidas!':'Defesa derrubada',
-    '<p>'+ (won?'Você segurou as vinte ondas e derrotou a Nau-Titã.':'A frota passou na onda '+game.wave+'.')+'</p>'+
-    '<div class="inspect-stats"><div class="inspect-stat"><span>Balões abatidos</span><strong>'+cash(game.killCount)+'</strong></div>'+
+    '<p>'+ (won?'Você segurou as vinte ondas e destruiu o Asteroide Titã.':'As rochas romperam a defesa na onda '+game.wave+'.')+'</p>'+
+    '<div class="inspect-stats"><div class="inspect-stat"><span>Rochas destruídas</span><strong>'+cash(game.killCount)+'</strong></div>'+
     '<div class="inspect-stat"><span>Vidas restantes</span><strong>'+game.lives+'</strong></div>'+
     '<div class="inspect-stat"><span>Maestria total</span><strong>'+cash(game.totalXP)+'</strong></div></div>'+
     '<div class="dialog-actions"><button class="secondary-button" type="button" data-do="close">Ver mapa</button><button class="primary-button" type="button" data-do="maps">'+icon('reset')+'Nova partida</button></div>');
